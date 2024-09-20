@@ -59,3 +59,22 @@ def insertar_transaccion(serial_banco, fecha, identificador, concepto):
         return False
     finally:
         db.disconnect()
+
+def consulta_transaccion(serial_banco):
+    db = Database()
+    try:
+        db.connect()
+        sql_transaccion_existencia = "SELECT * FROM transaccion WHERE serial_banco = %s"
+        parametro = (str(serial_banco),)
+        resultado = db.execute_query(sql_transaccion_existencia, parametro)
+
+        if resultado:
+            return True
+        else:
+            return False
+
+    except Exception as e:
+        print(f"Error al buscar la transaccion: {e}")
+        return False
+    finally:
+        db.disconnect()

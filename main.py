@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-
+import shutil
 from registros_excel import ManejoExcel
 from consultas import insertar_transaccion, insertar_usuario
 
@@ -9,7 +9,9 @@ from consultas import insertar_transaccion, insertar_usuario
 directorio = 'ejemplo_excel'
 directorio_general = os.path.join(os.getcwd(), directorio)
 
-archivo_prueba = 'ejemplo_datos_banco.xlsx'
+#directorio donde se ira una vez procesados los excel
+carpeta_historico = "historico bancos"
+directorio_historico = os.path.join(os.getcwd(), carpeta_historico)
 
 # Especificar el orden de las columnas
 orden_columnas = ['concepto','valor','serial banco', 'fecha', 'nombre','identificador','email','celular', 'tipo persona']
@@ -85,3 +87,12 @@ print("se comienza a insertar transaccion")
 #ingresar transacciones
 for transaccion in transacciones:
     insertar_transaccion(transaccion['serial_banco'], transaccion['fecha'], transaccion['identificador'], transaccion['concepto'])
+
+#cambio de excel a carpeta historico
+for i in archivo:
+    directorio_especifico = os.path.join(directorio_general, i)
+    
+    if os.path.exists(directorio_especifico):
+        # Mueve el archivo a la carpeta de histórico
+        shutil.move(directorio_especifico, directorio_historico)
+        print(f"Archivo {i} movido a la carpeta histórico.")
