@@ -18,32 +18,34 @@ class Database:
                 password=self.password
             )
             self.cursor = self.connection.cursor()
-            print("Se conectó a la base de datos")
+            #print("Se conectó a la base de datos")
         except psycopg2.Error as e:
             print(f"Eror en la conexión a la base de datos {e}")
 
     def disconnect(self):
         if self.connection:
             self.connection.close()
-            print("Se desconectó la base de datos")
+           # print("Se desconectó la base de datos")
 
-    def execute_query(self, query):
+    def execute_query(self, query, params=None):
         try:
-            self.cursor.execute(query)
-            self.connection.commit()
-            return self.cursor.fetchall()
+            if params:
+                self.cursor.execute(query, params)
+            else:
+                self.cursor.execute(query)
+            
+            if query.strip().upper().startswith("SELECT"):  # Verificar si es una consulta
+                return self.cursor.fetchall()  # Retornar resultados
+            else:
+                self.connection.commit()  # Solo hacer commit para inserciones/actualizaciones
         except psycopg2.Error as e:
-            print(f"No se pudo ejecutar la consulta {e}")
+            print(f"No se pudo ejecutar la consulta: {e}")
 
     def __del__(self):
         self.disconnect()
 
 
-# Crear una instancia de la clase Database
-db = Database()
 
-# Intentar establecer la conexión
-db.connect()
-
-# Cerrar la conexión
-db.disconnect()
+#db = Database()
+#db.connect()
+#db.disconnect()
